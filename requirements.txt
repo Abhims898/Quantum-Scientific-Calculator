@@ -1,5 +1,5 @@
-Flask
-numpy
-gunicorn
-qiskit
-qiskit-aer
+Flask==2.3.4
+numpy==1.26.2
+gunicorn==21.2.0
+qiskit==1.13.0
+qiskit-aer==0.12.2
