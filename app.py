@@ -1,8 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import numpy as np
 import sympy as sp
-from qiskit import QuantumCircuit
-from qiskit.primitives import Sampler
+from qiskit import QuantumCircuit, Aer, execute
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 import io
@@ -37,7 +36,7 @@ def calculate():
         elif mode == "quantum":
             qc_data = data.get("qc_data", [])  # list of dicts {gate, qubits}
             num_qubits = data.get("num_qubits", 1)
-            qc = QuantumCircuit(num_qubits)
+            qc = QuantumCircuit(num_qubits, num_qubits)
 
             # Apply gates
             for gate in qc_data:
@@ -58,10 +57,10 @@ def calculate():
                 elif g.lower() == "measure":
                     qc.measure_all()
 
-            # Run using Sampler (Qiskit >=0.46)
-            sampler = Sampler()
-            quantum_result = sampler.run(qc).result()
-            counts = quantum_result.quasi_dists[0]  # dictionary of probabilities
+            # Run using Aer simulator
+            simulator = Aer.get_backend('qasm_simulator')
+            job = execute(qc, simulator, shots=1024)
+            counts = job.result().get_counts()
             result = str(counts)
 
             # Generate circuit image
