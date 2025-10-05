@@ -30,11 +30,17 @@
     <button onclick="calculate('quantum')">Quantum</button>
 
     <h2>Matrix Operations</h2>
-    <textarea id="matA" placeholder="Matrix A JSON"></textarea>
-    <textarea id="matB" placeholder="Matrix B JSON"></textarea>
-    <button onclick="calculate('mat_add')">A + B</button>
-    <button onclick="calculate('mat_sub')">A - B</button>
-    <button onclick="calculate('mat_mul')">A × B</button>
+    <div id="matrixEditor">
+        <table id="matrixA" class="matrix"></table>
+        <table id="matrixB" class="matrix"></table>
+        <button onclick="addRow('matrixA')">Add Row A</button>
+        <button onclick="addCol('matrixA')">Add Col A</button>
+        <button onclick="addRow('matrixB')">Add Row B</button>
+        <button onclick="addCol('matrixB')">Add Col B</button>
+        <button onclick="calculate('mat_add')">A + B</button>
+        <button onclick="calculate('mat_sub')">A - B</button>
+        <button onclick="calculate('mat_mul')">A × B</button>
+    </div>
 
     <h2>Result:</h2>
     <div id="result"></div>
