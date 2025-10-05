@@ -11,25 +11,21 @@
             color: #f0f0f0;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            padding: 30px;
         }
         .calculator {
             background: #2e2e4d;
-            padding: 30px;
+            padding: 25px;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            width: 400px;
-            text-align: center;
+            width: 450px;
         }
         h1 {
-            margin-bottom: 20px;
-            font-size: 1.8em;
+            text-align: center;
             color: #ffcc00;
         }
         input[type="text"], select {
-            width: 80%;
+            width: calc(100% - 20px);
             padding: 10px;
             margin: 10px 0;
             border-radius: 8px;
@@ -39,35 +35,25 @@
         button {
             background: #ffcc00;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 15px;
             font-size: 1em;
             border-radius: 8px;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 10px;
+            margin: 5px;
         }
-        button:hover {
-            background: #ff9900;
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 1.2em;
-            word-wrap: break-word;
-            min-height: 40px;
-        }
-        #quantum-plot {
-            margin-top: 15px;
-            max-width: 100%;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-        }
+        button:hover { background: #ff9900; }
+        #result { margin-top: 20px; font-size: 1.1em; min-height: 40px; word-wrap: break-word; }
+        #quantum-plot { margin-top: 15px; max-width: 100%; border-radius: 10px; border: 1px solid #ccc; display: none; }
+        .quantum-controls { margin-top: 10px; background: #3e3e6d; padding: 10px; border-radius: 10px; text-align: center; }
     </style>
 </head>
 <body>
     <div class="calculator">
         <h1>Quantum Scientific Calculator</h1>
+
         <input type="text" id="expression" placeholder="Enter expression">
-        <br>
+
         <select id="mode">
             <option value="scientific">Scientific</option>
             <option value="complex">Complex</option>
@@ -75,23 +61,53 @@
             <option value="quantum">Quantum</option>
             <option value="memory">Memory</option>
         </select>
-        <br>
+
+        <!-- Quantum gate interface -->
+        <div class="quantum-controls" id="quantum-controls" style="display:none;">
+            <label>Qubits: <input type="number" id="num_qubits" value="2" min="1" max="5"></label>
+            <div style="margin-top:10px;">
+                <button onclick="addGate('h')">H</button>
+                <button onclick="addGate('x')">X</button>
+                <button onclick="addGate('y')">Y</button>
+                <button onclick="addGate('z')">Z</button>
+                <button onclick="addGate('cx')">CX</button>
+                <button onclick="addGate('ccx')">CCX</button>
+                <button onclick="addGate('measure')">Measure</button>
+            </div>
+        </div>
+
         <button onclick="calculate()">Calculate</button>
+
         <div id="result"></div>
-        <img id="quantum-plot" src="" alt="" style="display:none;">
+        <img id="quantum-plot" src="" alt="Quantum Circuit Plot">
+
     </div>
 
     <script>
+        let qcData = [];
+
+        document.getElementById("mode").addEventListener("change", function() {
+            const mode = this.value;
+            document.getElementById("quantum-controls").style.display = (mode === "quantum") ? "block" : "none";
+        });
+
+        function addGate(gate) {
+            let qubits = prompt("Enter qubit indices (comma separated, starting from 0):");
+            if(!qubits) return;
+            let qArray = qubits.split(",").map(x => parseInt(x.trim()));
+            qcData.push({gate: gate, qubits: qArray});
+            alert(gate.toUpperCase() + " gate added on qubits: " + qArray.join(", "));
+        }
+
         async function calculate() {
             const expression = document.getElementById("expression").value;
             const mode = document.getElementById("mode").value;
 
             let data = { expression, mode };
 
-            // For quantum mode, you can extend to send qc_data and num_qubits if needed
-            if (mode === "quantum") {
-                data.qc_data = []; // Add your gates array if implementing GUI for quantum gates
-                data.num_qubits = 2;
+            if(mode === "quantum") {
+                data.qc_data = qcData;
+                data.num_qubits = parseInt(document.getElementById("num_qubits").value);
             }
 
             const response = await fetch("/calculate", {
@@ -103,13 +119,16 @@
             const result = await response.json();
             document.getElementById("result").innerText = result.result;
 
-            if (result.plot) {
-                const img = document.getElementById("quantum-plot");
+            const img = document.getElementById("quantum-plot");
+            if(result.plot) {
                 img.src = result.plot;
                 img.style.display = "block";
             } else {
-                document.getElementById("quantum-plot").style.display = "none";
+                img.style.display = "none";
             }
+
+            // Clear quantum data after execution
+            if(mode === "quantum") qcData = [];
         }
     </script>
 </body>
