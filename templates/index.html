@@ -3,13 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <title>Quantum Scientific Calculator</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #1e1e2f;
+            color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .calculator {
+            background: #2e2e4d;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            color: #ffcc00;
+        }
+        input[type="text"], select {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 1em;
+        }
+        button {
+            background: #ffcc00;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #ff9900;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            word-wrap: break-word;
+            min-height: 40px;
+        }
+        #quantum-plot {
+            margin-top: 15px;
+            max-width: 100%;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
     <div class="calculator">
-        <h2>Quantum Scientific Calculator</h2>
+        <h1>Quantum Scientific Calculator</h1>
         <input type="text" id="expression" placeholder="Enter expression">
-        
+        <br>
         <select id="mode">
             <option value="scientific">Scientific</option>
             <option value="complex">Complex</option>
@@ -17,21 +75,42 @@
             <option value="quantum">Quantum</option>
             <option value="memory">Memory</option>
         </select>
-
-        <select id="action" style="display:none;">
-            <option value="M+">M+</option>
-            <option value="M-">M-</option>
-            <option value="MR">MR</option>
-        </select>
-
-        <textarea id="quantumData" placeholder='Quantum JSON: [{"gate":"h","qubits":[0]}, {"gate":"measure","qubits":[0]}]' style="display:none;"></textarea>
-        <input type="number" id="num_qubits" placeholder="Number of qubits" value="1" style="display:none;">
-
+        <br>
         <button onclick="calculate()">Calculate</button>
         <div id="result"></div>
-        <img id="qc_plot" style="display:none;" />
+        <img id="quantum-plot" src="" alt="" style="display:none;">
     </div>
 
-    <script src="/static/script.js"></script>
+    <script>
+        async function calculate() {
+            const expression = document.getElementById("expression").value;
+            const mode = document.getElementById("mode").value;
+
+            let data = { expression, mode };
+
+            // For quantum mode, you can extend to send qc_data and num_qubits if needed
+            if (mode === "quantum") {
+                data.qc_data = []; // Add your gates array if implementing GUI for quantum gates
+                data.num_qubits = 2;
+            }
+
+            const response = await fetch("/calculate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            document.getElementById("result").innerText = result.result;
+
+            if (result.plot) {
+                const img = document.getElementById("quantum-plot");
+                img.src = result.plot;
+                img.style.display = "block";
+            } else {
+                document.getElementById("quantum-plot").style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
