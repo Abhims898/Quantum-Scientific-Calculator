@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify
 import numpy as np
 import sympy as sp
-from qiskit import QuantumCircuit, execute, Aer
-from qiskit.visualization import plot_histogram, circuit_drawer
+from qiskit import QuantumCircuit
+from qiskit.primitives import Sampler
+from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 import io
+import base64
 
 app = Flask(__name__)
 
@@ -35,7 +37,7 @@ def calculate():
         elif mode == "quantum":
             qc_data = data.get("qc_data", [])  # list of dicts {gate, qubits}
             num_qubits = data.get("num_qubits", 1)
-            qc = QuantumCircuit(num_qubits, num_qubits)
+            qc = QuantumCircuit(num_qubits)
 
             # Apply gates
             for gate in qc_data:
@@ -54,11 +56,12 @@ def calculate():
                 elif g.lower() == "ccx":
                     qc.ccx(q[0], q[1], q[2])
                 elif g.lower() == "measure":
-                    for qubit in q: qc.measure(qubit, qubit)
+                    qc.measure_all()
 
-            simulator = Aer.get_backend("aer_simulator")
-            job = execute(qc, simulator, shots=1024)
-            counts = job.result().get_counts()
+            # Run using Sampler (Qiskit >=0.46)
+            sampler = Sampler()
+            quantum_result = sampler.run(qc).result()
+            counts = quantum_result.quasi_dists[0]  # dictionary of probabilities
             result = str(counts)
 
             # Generate circuit image
@@ -66,8 +69,7 @@ def calculate():
             buf = io.BytesIO()
             fig.savefig(buf, format='png')
             buf.seek(0)
-            plot_url = "data:image/png;base64," + \
-                str(io.BytesIO(buf.read()).getvalue().hex())
+            plot_url = "data:image/png;base64," + base64.b64encode(buf.read()).decode()
             buf.close()
 
         elif mode == "memory":
@@ -84,6 +86,7 @@ def calculate():
             result = "Invalid mode"
 
         return jsonify({"result": result, "plot": plot_url})
+
     except Exception as e:
         return jsonify({"result": str(e)})
 
