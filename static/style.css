@@ -1,0 +1,54 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f0f1e;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.calculator {
+    background: linear-gradient(135deg, #1e1e2f, #2e2e4e);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 30px #000;
+    text-align: center;
+    width: 650px;
+}
+
+.inputs input, .matrix-inputs textarea {
+    width: 180px;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    border: none;
+    text-align: center;
+}
+
+.matrix-inputs textarea {
+    width: 280px;
+    height: 80px;
+}
+
+.buttons button {
+    margin: 5px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(45deg, #ff5f5f, #ff9f9f);
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 0 10px #ff5f5f, 0 0 20px #ff9f9f;
+    transition: 0.3s;
+}
+
+.buttons button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #ff5f5f, 0 0 40px #ff9f9f, 0 0 60px #ffb0b0;
+}
+
+.result h2 { margin-top: 20px; }
+.history { margin-top: 20px; text-align: left; max-height: 150px; overflow-y: auto; }
+#quantumCanvas { margin-top: 20px; background: #1e1e2f; border-radius: 10px; }

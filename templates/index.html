@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantum Scientific Calculator</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="calculator">
+    <h1>Quantum Scientific Calculator</h1>
+    
+    <div class="inputs">
+        <input type="text" id="a" placeholder="Number / Complex a+bi">
+        <input type="text" id="b" placeholder="Number / Complex a+bi / Second number">
+        <input type="number" id="value" placeholder="Value (for sin, cos, log, etc.)">
+    </div>
+
+    <div class="buttons">
+        <button onclick="calculate('add')">Add</button>
+        <button onclick="calculate('subtract')">Subtract</button>
+        <button onclick="calculate('multiply')">Multiply</button>
+        <button onclick="calculate('divide')">Divide</button>
+
+        <button onclick="calculate('sin')">Sin</button>
+        <button onclick="calculate('cos')">Cos</button>
+        <button onclick="calculate('tan')">Tan</button>
+        <button onclick="calculate('log')">Log</button>
+        <button onclick="calculate('exp')">Exp</button>
+        <button onclick="calculate('sqrt')">Sqrt</button>
+
+        <button onclick="calculate('M+')">M+</button>
+        <button onclick="calculate('M-')">M-</button>
+        <button onclick="calculate('MR')">MR</button>
+
+        <button onclick="calculate('cadd')">Complex Add</button>
+        <button onclick="calculate('csub')">Complex Sub</button>
+        <button onclick="calculate('cmul')">Complex Mul</button>
+        <button onclick="calculate('cdiv')">Complex Div</button>
+    </div>
+
+    <div class="matrix-inputs">
+        <h3>Matrix Operations (NxN)</h3>
+        <textarea id="matA" placeholder="Matrix A e.g. [[1,2],[3,4]]"></textarea>
+        <textarea id="matB" placeholder="Matrix B e.g. [[5,6],[7,8]]"></textarea>
+        <button onclick="calculate('madd')">Matrix Add</button>
+        <button onclick="calculate('mmul')">Matrix Multiply</button>
+    </div>
+
+    <canvas id="quantumCanvas" width="500" height="100"></canvas>
+
+    <div class="result">
+        <h2>Result: <span id="result">0</span></h2>
+    </div>
+
+    <div class="history">
+        <h3>History:</h3>
+        <ul id="historyList"></ul>
+    </div>
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
