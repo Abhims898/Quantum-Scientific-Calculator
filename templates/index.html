@@ -1,56 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quantum Scientific Calculator</title>
-<link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>Quantum Scientific Calculator</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<h1>Quantum Scientific Calculator</h1>
+    <div class="calculator">
+        <h2>Quantum Scientific Calculator</h2>
+        <input type="text" id="expression" placeholder="Enter expression">
+        
+        <select id="mode">
+            <option value="scientific">Scientific</option>
+            <option value="complex">Complex</option>
+            <option value="matrix">Matrix</option>
+            <option value="quantum">Quantum</option>
+            <option value="memory">Memory</option>
+        </select>
 
-<div class="calculator">
-    <input type="text" id="a" placeholder="A">
-    <input type="text" id="b" placeholder="B">
-    <input type="text" id="value" placeholder="Value for memory">
+        <select id="action" style="display:none;">
+            <option value="M+">M+</option>
+            <option value="M-">M-</option>
+            <option value="MR">MR</option>
+        </select>
 
-    <button onclick="calculate('+')">+</button>
-    <button onclick="calculate('-')">-</button>
-    <button onclick="calculate('*')">*</button>
-    <button onclick="calculate('/')">/</button>
-    <button onclick="calculate('^')">^</button>
-    <button onclick="calculate('sin')">sin</button>
-    <button onclick="calculate('cos')">cos</button>
-    <button onclick="calculate('tan')">tan</button>
-    <button onclick="calculate('log')">log</button>
-    <button onclick="calculate('sqrt')">sqrt</button>
-    <button onclick="calculate('M+')">M+</button>
-    <button onclick="calculate('M-')">M-</button>
-    <button onclick="calculate('MR')">MR</button>
-    <button onclick="calculate('quantum')">Quantum</button>
+        <textarea id="quantumData" placeholder='Quantum JSON: [{"gate":"h","qubits":[0]}, {"gate":"measure","qubits":[0]}]' style="display:none;"></textarea>
+        <input type="number" id="num_qubits" placeholder="Number of qubits" value="1" style="display:none;">
 
-    <h2>Matrix Operations</h2>
-    <div id="matrixEditor">
-        <table id="matrixA" class="matrix"></table>
-        <table id="matrixB" class="matrix"></table>
-        <button onclick="addRow('matrixA')">Add Row A</button>
-        <button onclick="addCol('matrixA')">Add Col A</button>
-        <button onclick="addRow('matrixB')">Add Row B</button>
-        <button onclick="addCol('matrixB')">Add Col B</button>
-        <button onclick="calculate('mat_add')">A + B</button>
-        <button onclick="calculate('mat_sub')">A - B</button>
-        <button onclick="calculate('mat_mul')">A × B</button>
+        <button onclick="calculate()">Calculate</button>
+        <div id="result"></div>
+        <img id="qc_plot" style="display:none;" />
     </div>
 
-    <h2>Result:</h2>
-    <div id="result"></div>
-</div>
-
-<h2>History:</h2>
-<ul id="historyList"></ul>
-
-<canvas id="quantumCanvas" width="500" height="100"></canvas>
-
-<script src="/static/script.js"></script>
+    <script src="/static/script.js"></script>
 </body>
 </html>
