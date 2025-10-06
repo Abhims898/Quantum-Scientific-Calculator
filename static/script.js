@@ -1,55 +1,48 @@
-const modeSelect = document.getElementById("mode");
-const actionSelect = document.getElementById("action");
-const quantumData = document.getElementById("quantumData");
-const numQubits = document.getElementById("num_qubits");
-const qcPlot = document.getElementById("qc_plot");
+let qcData = [];
 
-modeSelect.addEventListener("change", () => {
-    if(modeSelect.value === "memory"){
-        actionSelect.style.display = "inline";
-        quantumData.style.display = "none";
-        numQubits.style.display = "none";
-    } else if(modeSelect.value === "quantum") {
-        quantumData.style.display = "block";
-        numQubits.style.display = "inline";
-        actionSelect.style.display = "none";
-    } else {
-        actionSelect.style.display = "none";
-        quantumData.style.display = "none";
-        numQubits.style.display = "none";
-    }
+document.getElementById("mode").addEventListener("change", function() {
+    const mode = this.value;
+    document.getElementById("quantum-controls").style.display = (mode === "quantum") ? "block" : "none";
 });
 
-function calculate() {
+function addGate(gate) {
+    let qubits = prompt("Enter qubit indices (comma separated, starting from 0):");
+    if(!qubits) return;
+    let qArray = qubits.split(",").map(x => parseInt(x.trim()));
+    qcData.push({ gate: gate, qubits: qArray });
+    alert(`${gate.toUpperCase()} gate added on qubits: ${qArray.join(", ")}`);
+}
+
+async function calculate() {
     const expression = document.getElementById("expression").value;
-    const mode = modeSelect.value;
-    const action = actionSelect.value;
+    const mode = document.getElementById("mode").value;
 
-    let payload = { expression, mode, action };
-
+    let data = { expression, mode };
     if(mode === "quantum") {
-        try {
-            payload.qc_data = JSON.parse(quantumData.value || "[]");
-            payload.num_qubits = parseInt(numQubits.value) || 1;
-        } catch(e) {
-            document.getElementById("result").innerText = "Invalid quantum JSON";
-            return;
-        }
+        data.qc_data = qcData;
+        data.num_qubits = parseInt(document.getElementById("num_qubits").value);
     }
 
-    fetch("/calculate", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("result").innerText = data.result;
-        if(data.plot){
-            qcPlot.src = data.plot;
-            qcPlot.style.display = "block";
+    try {
+        const response = await fetch("/calculate", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        document.getElementById("result").innerText = result.result || "No result.";
+
+        const img = document.getElementById("quantum-plot");
+        if(result.plot){
+            img.src = result.plot;
+            img.style.display = "block";
         } else {
-            qcPlot.style.display = "none";
+            img.style.display = "none";
         }
-    });
+
+        if(mode === "quantum") qcData = [];
+    } catch(err) {
+        document.getElementById("result").innerText = "Error: " + err.message;
+    }
 }
