@@ -1,0 +1,10 @@
+# Quantum Scientific Calculator - Requirements
+
+Flask==3.0.3
+qiskit==1.2.4
+numpy==1.26.4
+sympy==1.13.1
+Werkzeug==3.0.2
+click==8.1.7
+itsdangerous==2.2.0
+Jinja2==3.1.4
